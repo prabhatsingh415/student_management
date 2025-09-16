@@ -2,16 +2,19 @@ import axios from "axios";
 import DynamicForm from "./form";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import Loader from "./Loader";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 const loginEndpoint = import.meta.env.VITE_LOGIN;
 
 function LoginForm() {
-  console.log("URL:", `${baseUrl}${loginEndpoint}`);
-
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("");
+  const [isError, setIsError] = useState(false);
 
-  const validationSchema = Yup.object().shape({
+  const validationSchema = Yup.object({
     username: Yup.string()
       .min(3, "Username must be at least 3 characters")
       .required("Username is required"),
@@ -20,66 +23,58 @@ function LoginForm() {
       .required("Password is required"),
   });
 
-  async function onSubmit(values, { setSubmitting, setStatus }) {
-    const url = `${baseUrl}${loginEndpoint}`;
-    const data = {
-      username: values.username,
-      password: values.password,
-    };
+  const onSubmit = async (values, { setSubmitting }) => {
+    setLoading(true);
+    setStatusMessage("");
+    setIsError(false);
 
     try {
-      console.log("URL:", `${baseUrl}${loginEndpoint}`);
-
-      const response = await axios.post(url, data, {
+      const response = await axios.post(`${baseUrl}${loginEndpoint}`, values, {
         headers: { "Content-Type": "application/json" },
       });
 
-      if (response.data.token) {
+      if (response.data?.token)
         localStorage.setItem("token", response.data.token);
-      }
 
-      console.log("Login successful:", response.data);
-
-      navigate("/");
+      setStatusMessage(
+        response.data?.message || "✅ Login successful! Redirecting..."
+      );
+      setIsError(false);
+      setTimeout(() => navigate("/"), 1500);
     } catch (error) {
-      if (error.response) {
-        const { status } = error.response;
-
-        if (status === 404) {
-          // ✅ Navigate to Not Found Page
-          navigate("/not-found");
-        } else if (status === 401) {
-          // ✅ Unauthorized
-          setStatus("Invalid credentials. Please try again.");
-        } else if (status === 500) {
-          // ✅ Internal server error
-          setStatus("Server error. Please try later.");
-        } else {
-          // ✅ Generic error
-          setStatus("Something went wrong. Please try again.");
-        }
-      } else {
-        // Network ya axios ka issue
-        setStatus("Network error. Please check your connection.");
-      }
+      const msg =
+        error.response?.data?.message ||
+        "⚠️ Network error. Please check your connection.";
+      setStatusMessage(`❌ ${msg}`);
+      setIsError(true);
     } finally {
       setSubmitting(false);
+      setLoading(false);
     }
-  }
-
-  const initialValues = {
-    username: "",
-    password: "",
   };
 
   return (
-    <DynamicForm
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={onSubmit}
-      title="Login"
-      submitLabel="Login"
-    />
+    <div className="relative">
+      <Loader show={loading} />
+
+      {statusMessage && (
+        <p
+          className={`text-center mb-4 font-medium ${
+            isError ? "text-red-600" : "text-green-600"
+          }`}
+        >
+          {statusMessage}
+        </p>
+      )}
+
+      <DynamicForm
+        initialValues={{ username: "", password: "" }}
+        validationSchema={validationSchema}
+        onSubmit={onSubmit}
+        title="Login"
+        submitLabel="Login"
+      />
+    </div>
   );
 }
 

@@ -21,19 +21,19 @@ export default function Footer() {
             </h2>
             <div className="flex mt-2 space-x-5 justify-center">
               <Link
-                to="#"
+                to="https://github.com/prabhatsingh415"
                 className="text-gray-400 hover:text-orange-500 transition-colors"
               >
                 Github
               </Link>
               <Link
-                to="#"
+                to="https://x.com/Prabhatsingh415"
                 className="text-gray-400 hover:text-orange-500 transition-colors"
               >
                 Twitter
               </Link>
               <Link
-                to="#"
+                to="https://www.linkedin.com/in/prabhat-singh-rj415/"
                 className="text-gray-400 hover:text-orange-500 transition-colors"
               >
                 LinkedIn

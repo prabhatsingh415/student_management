@@ -12,10 +12,8 @@ const DynamicForm = ({
   const [serverError, setServerError] = useState("");
   const navigate = useNavigate();
 
-  // ✅ Corrected handleSubmit
   const handleSubmit = async (values, actions) => {
     try {
-      // ✅ Pass actions bhi parent ko
       await onSubmit(values, actions);
       setServerError("");
     } catch (error) {
@@ -60,12 +58,13 @@ const DynamicForm = ({
                     type={
                       key.toLowerCase().includes("password")
                         ? "password"
+                        : key.toLowerCase().includes("date")
+                        ? "date"
                         : "text"
                     }
                     placeholder={`Enter ${key}`}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white text-gray-800 placeholder-gray-400"
                   />
-
                   <ErrorMessage
                     name={key}
                     component="div"

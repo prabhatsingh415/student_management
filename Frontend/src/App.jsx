@@ -1,4 +1,3 @@
-import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import LoginForm from "./components/LoginForm";
@@ -6,10 +5,14 @@ import Layout from "./components/Layout";
 import AddStudent from "./components/AddStudent";
 import UpdateCourse from "./components/UpdateCourse";
 import DeleteStudent from "./components/DeleteStudent";
-import GetStudent from "./components/GetStudent";
+import GetStudents from "./components/GetStudents";
 import Home from "./components/Home";
 
-const isLoggedIn = () => localStorage.getItem("auth") === "true";
+const isLoggedIn = () => {
+  const token = localStorage.getItem("token");
+  return token !== null && token !== "";
+};
+
 const ProtectedRoute = ({ children }) => {
   return isLoggedIn() ? children : <Navigate to="/login" />;
 };
@@ -40,10 +43,10 @@ export default function App() {
             }
           />
           <Route
-            path="get-student"
+            path="get-students" // make sure URL matches exactly
             element={
               <ProtectedRoute>
-                <GetStudent />
+                <GetStudents />
               </ProtectedRoute>
             }
           />
