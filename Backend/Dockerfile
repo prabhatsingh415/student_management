@@ -1,17 +1,13 @@
-FROM maven:3.9.1-openjdk-17 AS build
+FROM maven:3.9.1-jdk-21 AS build
 WORKDIR /app
-
 
 COPY pom.xml .
 COPY src ./src
 
-
 RUN mvn clean package -DskipTests
 
-
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:21-jdk AS runtime
 WORKDIR /app
-
 
 COPY --from=build /app/target/StudentManagement-0.0.1-SNAPSHOT.jar app.jar
 
