@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 import axios from "axios";
-import DynamicForm from "./form";
+import DynamicForm from "./Form";
 import { useState } from "react";
 import Loader from "./Loader"; // Reusable GIF loader
 

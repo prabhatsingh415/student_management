@@ -1,5 +1,5 @@
 import axios from "axios";
-import DynamicForm from "./form";
+import DynamicForm from "./Form";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
