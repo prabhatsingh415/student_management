@@ -3,6 +3,7 @@ package com.prabhat.StudentManagement.service;
 import com.prabhat.StudentManagement.controller.AuthController;
 import com.prabhat.StudentManagement.entity.Course;
 import com.prabhat.StudentManagement.entity.Student;
+import com.prabhat.StudentManagement.exceptions.EmailAlreadyExistsException;
 import com.prabhat.StudentManagement.exceptions.StudentNotFoundException;
 import com.prabhat.StudentManagement.repository.CourseRepository;
 import com.prabhat.StudentManagement.repository.StudentRepository;
@@ -35,6 +36,10 @@ public class StudentServiceImpl implements StudentService{
 
             student.setCourse(dbCourse);
         }
+
+        Student student1 = studentRepository.findByEmail(student.getEmail());
+
+        if(student1 != null)throw new EmailAlreadyExistsException("This student already exists in records !");
 
         studentRepository.save(student);
     }

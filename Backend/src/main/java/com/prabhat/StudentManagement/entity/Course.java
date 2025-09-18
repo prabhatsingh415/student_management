@@ -1,5 +1,7 @@
 package com.prabhat.StudentManagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,9 +23,13 @@ public class Course {
 
     @Column(unique = true)
     private String courseName;
+
+    @Column
+    @JsonProperty("courseDescription")
     private String description;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Student> students = new ArrayList<>();
 
 }

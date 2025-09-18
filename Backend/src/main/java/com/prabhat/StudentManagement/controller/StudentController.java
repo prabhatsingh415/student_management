@@ -1,5 +1,6 @@
 package com.prabhat.StudentManagement.controller;
 
+import com.prabhat.StudentManagement.Model.StudentDTO;
 import com.prabhat.StudentManagement.entity.Course;
 import com.prabhat.StudentManagement.entity.Student;
 import com.prabhat.StudentManagement.service.StudentService;
@@ -34,17 +35,23 @@ public class StudentController {
     }
 
     @GetMapping("/students")
-    public ResponseEntity<?> getAllStudents(@RequestParam("token") String token){
+    public ResponseEntity<?> getAllStudents(@RequestParam("token") String token) {
         service.checkToken(token);
 
         List<Student> students = service.getAllStudents();
-        return ResponseEntity.ok(
-                Map.of(
-                        "status", "success",
-                        "data", students
-                )
-        );
+
+        List<StudentDTO> studentDTOs = students.stream().map(s -> new StudentDTO(
+                s.getId(),
+                s.getName(),
+                s.getEmail(),
+                s.getDateOfJoining(),
+                s.getCourse() != null ? s.getCourse().getCourseName() : "-",
+                s.getCourse() != null ? s.getCourse().getDescription() : "-"
+        )).toList();
+
+        return ResponseEntity.ok(Map.of("status", "success", "data", studentDTOs));
     }
+
     @PutMapping("/{studentId}/course")
     public ResponseEntity<Map<String, String>> updateCourse(
             @RequestParam("token") String token,
@@ -73,20 +80,18 @@ public class StudentController {
     }
 
 
-    @DeleteMapping("/{studentId}/student")
+    @DeleteMapping("/{studentId}")
     public ResponseEntity<Map<String, String>> deleteStudent(
             @RequestParam("token") String token,
             @PathVariable long studentId) {
 
         service.checkToken(token);
-
         service.deleteStudent(studentId);
+
         return ResponseEntity.ok(
-                Map.of(
-                        "status", "success",
-                        "message", "Student deleted successfully"
-                )
+                Map.of("status", "success", "message", "Student deleted successfully")
         );
     }
+
 }
 
